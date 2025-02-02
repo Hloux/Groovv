@@ -8,14 +8,14 @@ import { NextResponse } from 'next/server'
 export async function POST(req: Request) {
  
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the webhook
-  const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET
+  const whsec_123 = process.env.whsec_123
  
-  if (!WEBHOOK_SECRET) {
+  if (!whsec_123) {
     throw new Error('Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local')
   }
  
   // Get the headers
-  const headerPayload = headers();
+  const headerPayload = await headers();
   const svix_id = headerPayload.get("svix-id");
   const svix_timestamp = headerPayload.get("svix-timestamp");
   const svix_signature = headerPayload.get("svix-signature");
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
   const body = JSON.stringify(payload);
  
   // Create a new Svix instance with your secret.
-  const wh = new Webhook(WEBHOOK_SECRET);
+  const wh = new Webhook(whsec_123);
  
   let evt: WebhookEvent
  
@@ -61,8 +61,8 @@ export async function POST(req: Request) {
       clerkId: id,
       email: email_addresses[0].email_address,
       username: username!,
-      firstName: first_name,
-      lastName: last_name,
+      firstName: first_name!,
+      lastName: last_name!,
       photo: image_url,
     }
 
@@ -83,8 +83,8 @@ export async function POST(req: Request) {
     const {id, image_url, first_name, last_name, username } = evt.data
 
     const user = {
-      firstName: first_name,
-      lastName: last_name,
+      firstName: first_name!,
+      lastName: last_name!,
       username: username!,
       photo: image_url,
     }
